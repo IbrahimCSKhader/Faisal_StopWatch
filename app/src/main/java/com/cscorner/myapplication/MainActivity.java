@@ -28,24 +28,24 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler();
 
+        updateTimerThread = new Runnable() {
+            public void run() {
+                updateTime = timeSwapBuff + (isRunning ? SystemClock.uptimeMillis() - startTime : 0);
+                updateDisplay();
+                handler.postDelayed(this, 100);
+            }
+        };
+
         if (savedInstanceState != null) {
             startTime = savedInstanceState.getLong("startTime");
             timeSwapBuff = savedInstanceState.getLong("timeSwapBuff");
             isRunning = savedInstanceState.getBoolean("isRunning");
 
             if (isRunning) {
-                startTime = SystemClock.uptimeMillis() - (savedInstanceState.getLong("elapsedTime"));
+                startTime = SystemClock.uptimeMillis() - savedInstanceState.getLong("elapsedTime");
                 handler.post(updateTimerThread);
             }
         }
-
-        updateTimerThread = new Runnable() {
-            public void run() {
-                updateTime = timeSwapBuff + SystemClock.uptimeMillis() - startTime;
-                updateDisplay();
-                handler.postDelayed(this, 1000); // تحديث كل ثانية
-            }
-        };
 
         btnStart.setOnClickListener(v -> {
             if (!isRunning) {
